@@ -40,4 +40,4 @@ if st.button("Login"):
 
 # Automatically redirect if already logged in
 if "logged_in" in st.session_state and st.session_state["logged_in"]:
-    st.switch_page("dashboard.py")
+    st.switch_page("transaction.py")
