@@ -5,15 +5,15 @@ import os
 
 # ---- Helper Functions ----
 def save_users(users):
-    """Save users to a JSON file"""
-    with open("users.json", "w") as f:
-        json.dump(users, f)
+    """Save users to the JSON file."""
+    with open("users.json", "w") as file:
+        json.dump(users, file, indent=4)
 
 def load_users():
-    """Load users from a JSON file"""
+    """Load users from the JSON file."""
     if os.path.exists("users.json"):
-        with open("users.json", "r") as f:
-            return json.load(f)
+        with open("users.json", "r") as file:
+            return json.load(file)
     return {}
 
 users = load_users()

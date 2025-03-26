@@ -5,10 +5,10 @@ import os
 
 # ---- Helper Functions ----
 def load_users():
-    """Load users from a JSON file"""
+    """Load users from the JSON file."""
     if os.path.exists("users.json"):
-        with open("users.json", "r") as f:
-            return json.load(f)
+        with open("users.json", "r") as file:
+            return json.load(file)
     return {}
 
 users = load_users()
@@ -23,7 +23,7 @@ if st.button("Login"):
     if username in users:
         stored_hashed_password = users[username]["password"]
 
-        # ✅ Verify password
+        # ✅ Verify the password
         if bcrypt.checkpw(password.encode("utf-8"), stored_hashed_password.encode("utf-8")):
             st.session_state["authentication_status"] = True
             st.session_state["username"] = username
