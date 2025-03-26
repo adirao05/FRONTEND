@@ -29,4 +29,6 @@ password = st.text_input("Password", type="password")
 if st.button("Login"):
     if authenticate_user(username, password):
         st.success("Login successful!")
+
+st.switch_page("pages/transaction")
         
