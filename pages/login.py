@@ -29,6 +29,6 @@ password = st.text_input("Password", type="password")
 if st.button("Login"):
     if authenticate_user(username, password):
         st.success("Login successful!")
+        st.markdown("""<div class='cta-button'><a href='/transaction' target='_self'>Transaction</a></div> """, unsafe_allow_html=True)
 
-st.switch_page("transaction.py")
         
