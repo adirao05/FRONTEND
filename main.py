@@ -1,6 +1,22 @@
 import streamlit as st
 import sqlite3
 
+#BACKGROUND COLOUR
+
+st.markdown(
+    """
+    <style>
+        body {
+            background: linear-gradient(135deg, #FFA500, #32CD32);  /* Orange to Green */
+            height: 100vh;
+            margin: 0;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
 # Initialize database connection
 def init_db():
     conn = sqlite3.connect("users.db")
