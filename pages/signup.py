@@ -30,9 +30,8 @@ if st.button("Sign Up"):
         if new_username in users:
             st.error("Username already exists")
         else:
-            # Updated password hashing method
-            hasher = stauth.Hasher([new_password])
-            hashed_password = hasher.generate()[0]
+            # 🔥 Correct hashing method
+            hashed_password = stauth.Hasher([new_password]).generate()[0]
 
             users[new_username] = {
                 "password": hashed_password
