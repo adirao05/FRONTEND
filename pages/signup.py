@@ -1,46 +1,43 @@
 import streamlit as st
-import bcrypt
 import json
-import os
+import hashlib
 
-# ---- Helper Functions ----
+# Load and save user data
+def load_users():
+    try:
+        with open("users.json", "r") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
+
 def save_users(users):
-    """Save users to the JSON file."""
     with open("users.json", "w") as file:
         json.dump(users, file, indent=4)
 
-def load_users():
-    """Load users from the JSON file."""
-    if os.path.exists("users.json"):
-        with open("users.json", "r") as file:
-            return json.load(file)
-    return {}
+# Hashing function
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
 
-users = load_users()
+st.title("📝 Sign Up Page")
 
-# ---- Signup Form ----
-st.title("📝 Signup")
-
-new_username = st.text_input("Choose a username")
-new_password = st.text_input("Create a password", type="password")
-confirm_password = st.text_input("Confirm password", type="password")
+# Input fields
+new_username = st.text_input("Choose a Username")
+new_password = st.text_input("Create a Password", type="password")
+confirm_password = st.text_input("Confirm Password", type="password")
 
 if st.button("Sign Up"):
-    if new_password == confirm_password:
-        if new_username in users:
-            st.error("Username already exists")
-        else:
-            # ✅ Hash the password before storing
-            hashed_password = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
-
-            users[new_username] = {
-                "password": hashed_password
-            }
-            save_users(users)
-            st.success("Account created successfully! Go to the login page.")
-    else:
+    if new_password != confirm_password:
         st.error("Passwords do not match")
+    else:
+        users = load_users()
 
-# ---- Navigation ----
-if st.button("Go to Login"):
-    st.switch_page("login.py")
+        if new_username in users:
+            st.error("Username already exists!")
+        else:
+            # Hash and save the new user
+            users[new_username] = hash_password(new_password)
+            save_users(users)
+            st.success(f"Account created for {new_username}!")
+
+if st.button("Back to Home"):
+    st.switch_page("../main.py")

@@ -1,44 +1,32 @@
 import streamlit as st
-import bcrypt
 import json
-import os
+import hashlib
 
-# ---- Helper Functions ----
+# Load user data
 def load_users():
-    """Load users from the JSON file."""
-    if os.path.exists("users.json"):
+    try:
         with open("users.json", "r") as file:
             return json.load(file)
-    return {}
+    except FileNotFoundError:
+        return {}
 
-users = load_users()
+# Hashing function
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
 
-# ---- Login Form ----
-st.title("🔑 Login")
+st.title("🔑 Login Page")
 
+# Input fields
 username = st.text_input("Username")
 password = st.text_input("Password", type="password")
 
 if st.button("Login"):
-    if username in users:
-        stored_hashed_password = users[username]["password"]
-
-        # ✅ Verify the password
-        if bcrypt.checkpw(password.encode("utf-8"), stored_hashed_password.encode("utf-8")):
-            st.session_state["authentication_status"] = True
-            st.session_state["username"] = username
-            st.success(f"Welcome, {username}! 🎉")
-        else:
-            st.error("Incorrect password")
+    users = load_users()
+    
+    if username in users and users[username] == hash_password(password):
+        st.success(f"Welcome back, {username}!")
     else:
-        st.error("User not found")
+        st.error("Invalid username or password")
 
-# ---- Navigation ----
-if st.button("Go to Signup"):
-    st.switch_page("signup.py")
-
-if st.session_state.get("authentication_status"):
-    st.write("✅ You are logged in.")
-    if st.button("Logout"):
-        st.session_state["authentication_status"] = None
-        st.experimental_rerun()
+if st.button("Back to Home"):
+    st.switch_page("../main.py")
