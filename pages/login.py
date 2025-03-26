@@ -25,26 +25,3 @@ st.title("🔑 Login Page")
 username = st.text_input("Username")
 password = st.text_input("Password", type="password")
 
-if st.button("Login"):
-    if authenticate_user(username, password):
-        st.success(f"Welcome back, {username}!")
-    else:
-        st.error("Invalid username or password")
-
-if st.button("Login"):
-    if authenticate_user(username, password):
-        st.success("Login successful! Redirecting...")
-        
-        # Store login state in session state
-        st.session_state["logged_in"] = True
-        st.session_state["username"] = username
-
-        # Redirect to the dashboard
-        st.experimental_rerun()
-    else:
-        st.error("Invalid username or password")
-
-# Automatically redirect if already logged in
-if "logged_in" in st.session_state and st.session_state["logged_in"]:
-    st.switch_page("dashboard.py")
-
