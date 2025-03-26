@@ -27,6 +27,3 @@ if st.button("Login"):
         st.success(f"Welcome back, {username}!")
     else:
         st.error("Invalid username or password")
-
-st.sidebar.page_link("../main.py", label="🏠 Home")
-st.sidebar.page_link("2_Sign_Up.py", label="📝 Sign Up")

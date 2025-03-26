@@ -38,6 +38,3 @@ if st.button("Sign Up"):
             users[new_username] = hash_password(new_password)
             save_users(users)
             st.success(f"Account created for {new_username}!")
-
-st.sidebar.page_link("../main.py", label="🏠 Home")
-st.sidebar.page_link("1_Login.py", label="🔑 Login")
