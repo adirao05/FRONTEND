@@ -39,5 +39,5 @@ if st.button("Sign Up"):
             save_users(users)
             st.success(f"Account created for {new_username}!")
 
-st.sidebar.page_link("main.py", label="🏠 Home")
-st.sidebar.page_link("pages/1_Login.py", label="🔑 Login")
+st.sidebar.page_link("../main.py", label="🏠 Home")
+st.sidebar.page_link("1_Login.py", label="🔑 Login")
