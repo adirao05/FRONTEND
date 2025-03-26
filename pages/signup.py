@@ -1,14 +1,15 @@
 import streamlit as st
 import json
 import hashlib
+import os
 
 # Load and save user data
 def load_users():
-    try:
-        with open("users.json", "r") as file:
-            return json.load(file)
-    except FileNotFoundError:
-        return {}
+    if not os.path.exists("users.json"):
+        with open("users.json", "w") as f:
+            json.dump({}, f)  # Create an empty JSON file
+    with open("users.json", "r") as file:
+        return json.load(file)
 
 def save_users(users):
     with open("users.json", "w") as file:
@@ -20,7 +21,6 @@ def hash_password(password):
 
 st.title("📝 Sign Up Page")
 
-# Input fields
 new_username = st.text_input("Choose a Username")
 new_password = st.text_input("Create a Password", type="password")
 confirm_password = st.text_input("Confirm Password", type="password")
@@ -39,5 +39,5 @@ if st.button("Sign Up"):
             save_users(users)
             st.success(f"Account created for {new_username}!")
 
-if st.button("Back to Home"):
-    st.switch_page("../main.py")
+st.sidebar.page_link("main.py", label="🏠 Home")
+st.sidebar.page_link("pages/1_Login.py", label="🔑 Login")
