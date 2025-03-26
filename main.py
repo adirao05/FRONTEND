@@ -13,9 +13,9 @@ st.markdown(
         }
     </style>
     """,
-    unsafe_allow_html=True
+    unsafe_allow_ttml=True
 )
-
+#ok
 
 # Initialize database connection
 def init_db():
