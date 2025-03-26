@@ -9,7 +9,7 @@ username = st.text_input("Username")
 password = st.text_input("Password", type="password")
 
 # SQLite connection
-conn = sqlite3.connect('db/users.db')
+conn = sqlite3.connect('users.db')
 cursor = conn.cursor()
 
 if st.button("Login"):

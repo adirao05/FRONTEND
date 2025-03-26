@@ -6,7 +6,7 @@ import os
 os.makedirs("db", exist_ok=True)
 
 # Connect to SQLite database
-conn = sqlite3.connect('db/users.db')
+conn = sqlite3.connect('users.db')
 cursor = conn.cursor()
 
 # Create table for users
