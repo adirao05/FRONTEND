@@ -1,9 +1,9 @@
 import streamlit as st
-import streamlit_authenticator as stauth
+import bcrypt
 import json
 import os
 
-# ---- Helper functions ----
+# ---- Helper Functions ----
 def save_users(users):
     """Save users to a JSON file"""
     with open("users.json", "w") as f:
@@ -30,8 +30,8 @@ if st.button("Sign Up"):
         if new_username in users:
             st.error("Username already exists")
         else:
-            # 🔥 Correct hashing method
-            hashed_password = stauth.Hasher([new_password]).generate()[0]
+            # ✅ Hash the password before storing
+            hashed_password = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
             users[new_username] = {
                 "password": hashed_password

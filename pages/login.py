@@ -1,9 +1,9 @@
 import streamlit as st
-import streamlit_authenticator as stauth
+import bcrypt
 import json
 import os
 
-# ---- Helper functions ----
+# ---- Helper Functions ----
 def load_users():
     """Load users from a JSON file"""
     if os.path.exists("users.json"):
@@ -21,12 +21,13 @@ password = st.text_input("Password", type="password")
 
 if st.button("Login"):
     if username in users:
-        hashed_password = users[username]["password"]
-        if stauth.Hasher([password]).verify(password, hashed_password):
+        stored_hashed_password = users[username]["password"]
+
+        # ✅ Verify password
+        if bcrypt.checkpw(password.encode("utf-8"), stored_hashed_password.encode("utf-8")):
             st.session_state["authentication_status"] = True
             st.session_state["username"] = username
-            st.success(f"Welcome {username}!")
-            st.experimental_rerun()
+            st.success(f"Welcome, {username}! 🎉")
         else:
             st.error("Incorrect password")
     else:
