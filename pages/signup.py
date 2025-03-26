@@ -30,12 +30,15 @@ if st.button("Sign Up"):
         if new_username in users:
             st.error("Username already exists")
         else:
-            # Add new user with hashed password
+            # Updated password hashing method
+            hasher = stauth.Hasher([new_password])
+            hashed_password = hasher.generate()[0]
+
             users[new_username] = {
-                "password": stauth.Hasher([new_password]).generate()[0]
+                "password": hashed_password
             }
             save_users(users)
-            st.success("Account created successfully! Go to login page.")
+            st.success("Account created successfully! Go to the login page.")
     else:
         st.error("Passwords do not match")
 
