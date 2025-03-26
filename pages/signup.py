@@ -7,7 +7,6 @@ import os
 def save_users(users):
     """Save users to a JSON file"""
     with open("users.json", "w") as f:
-        print(users)
         json.dump(users, f)
 
 def load_users():
