@@ -22,7 +22,7 @@ def add_user(username, password):
 
 st.title("📝 Sign Up Page")
 
-new_username = st.text_input("Choose a Username")
+new_username = st.text_input("Choose a UserId")
 new_password = st.text_input("Create a Password", type="password")
 confirm_password = st.text_input("Confirm Password", type="password")
 
@@ -36,6 +36,6 @@ if st.button("Sign Up"):
 
 st.markdown("""
     <div class='cta-button'>
-        <a href='/login' target='_self'>Already have an account?? Loginn...</a>
+        <a href='/login' target='_self'>Already have an account?? Login...</a>
     </div>
 """, unsafe_allow_html=True)
