@@ -1,20 +1,27 @@
 import streamlit as st
-import pandas as pd
-import matplotlib.pyplot as plt
 import sqlite3
 
-st.set_page_config(page_title="Finance App", layout="wide")
+# Initialize database connection
+def init_db():
+    conn = sqlite3.connect("users.db")
+    cursor = conn.cursor()
+    
+    # Create table if it doesn't exist
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL
+    )
+    ''')
+    conn.commit()
+    conn.close()
 
-# Check if user is logged in
-if "authenticated" not in st.session_state or not st.session_state["authenticated"]:
-    st.warning("Please login first.")
-    st.stop()
+# Initialize DB
+init_db()
 
-st.title(f"Welcome {st.session_state['username']}!")
+st.set_page_config(page_title="Auth App", layout="centered")
 
-# Main App Content
-st.write("This is your financial dashboard.")
-if st.button("Logout"):
-    st.session_state["authenticated"] = False
-    st.experimental_rerun()
+st.title("🏠 Welcome to the Authentication App")
 
+st.write("Use the sidebar to navigate to the Login or Sign Up page.")
