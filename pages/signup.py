@@ -33,3 +33,9 @@ if st.button("Sign Up"):
         st.error("Password must be at least 6 characters long")
     else:
         add_user(new_username, new_password)
+
+st.markdown("""
+    <div class='cta-button'>
+        <a href='/login' target='_self'>Already have an account?? Loginn...</a>
+    </div>
+""", unsafe_allow_html=True)
