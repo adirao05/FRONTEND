@@ -2,3 +2,6 @@ streamlit
 matplotlib
 pandas
 numpy
+streamlit-authenticator
+bcrypt
+sqlite3
