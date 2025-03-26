@@ -30,5 +30,5 @@ if st.button("Login"):
     if authenticate_user(username, password):
         st.success("Login successful!")
 
-st.switch_page("pages/transaction.py")
+st.switch_page("transaction.py")
         
