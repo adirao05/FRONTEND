@@ -34,7 +34,7 @@ if st.button("Login"):
         st.session_state["username"] = username
 
         # Redirect to the dashboard
-        st.experimental_rerun()
+        st.rerun()
     else:
         st.error("Invalid username or password")
 
