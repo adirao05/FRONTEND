@@ -2,19 +2,23 @@ import streamlit as st
 import sqlite3
 
 #BACKGROUND COLOUR
-
 st.markdown(
     """
     <style>
-        body {
-            background: linear-gradient(135deg, #FFA500, #32CD32);  /* Orange to Green */
-            height: 100vh;
-            margin: 0;
+        /* Main page background */
+        .main {
+            background: linear-gradient(135deg, #FFA500, #32CD32);  
+        }
+
+        /* Sidebar background */
+        [data-testid="stSidebar"] {
+            background: linear-gradient(135deg, #32CD32, #FFA500);  
         }
     </style>
     """,
     unsafe_allow_html=True
 )
+
 
 
 # Initialize database connection
