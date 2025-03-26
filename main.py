@@ -2,6 +2,8 @@ import streamlit as st
 import sqlite3
 
 #BACKGROUND COLOUR
+st.set_page_config(page_title="AI-Powered Fintech",layout="wide")
+
 st.markdown(
     """
     <style>
@@ -39,11 +41,6 @@ def init_db():
 
 # Initialize DB
 init_db()
-
-import streamlit as st
-
-# Streamlit UI Enhancements
-st.set_page_config(page_title="AI-Powered Fintech", layout="wide")
 
 st.markdown("""
     <style>
