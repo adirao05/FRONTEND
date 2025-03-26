@@ -111,7 +111,7 @@ st.markdown("""
 st.markdown("""
 *Key Features:*
 
-                    - 📊 *Smart Budgeting*: AI-driven recommendations based on income, expenses, and spending habits.
+                               - 📊 *Smart Budgeting*: AI-driven recommendations based on income, expenses, and spending habits.
                     - 💹 *Investment Strategies*: Tailored investment suggestions aligned with your financial goals.
                     - 📉 *Debt Management*: Optimize repayments and manage financial obligations effectively.
                     - 🌍 *Cross-Platform Accessibility*: Use our platform on any device, anywhere, anytime.
@@ -120,6 +120,6 @@ st.markdown("""
 
 st.markdown("""
     <div class='cta-button'>
-        <a href='#'>Get Started</a>
+        <a href='/signup' target='_self'>Get Started</a>
     </div>
 """, unsafe_allow_html=True)
