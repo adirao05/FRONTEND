@@ -21,80 +21,65 @@ def init_db():
 init_db()
 
 import streamlit as st
-import pandas as pd
-import numpy as np
-import time
-
-# Function for AI-based financial advice
-def generate_financial_advice(income, expenses, investment_goal, debt_level):
-    savings = income - expenses
-    advice = ""
-    
-    if savings > 0:
-        advice += f"Great! You're saving {savings} per month. "
-    else:
-        advice += "You're spending more than you earn! Consider cutting unnecessary expenses. "
-    
-    if debt_level > 0:
-        advice += "Focus on reducing your debt first before making major investments. "
-    else:
-        advice += "You have no debt! Consider diversifying your investments. "
-    
-    if investment_goal.lower() == "high growth":
-        advice += "Look into high-return investments like stocks or ETFs."
-    elif investment_goal.lower() == "low risk":
-        advice += "Consider bonds, fixed deposits, or index funds for stability."
-    else:
-        advice += "A balanced portfolio with a mix of stocks and bonds could work well."
-    
-    return advice
 
 # Streamlit UI Enhancements
 st.set_page_config(page_title="AI-Powered Fintech", layout="wide")
 st.markdown("""
     <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
         .title {
             font-size: 50px;
             font-weight: bold;
             color: #FF5733;
             text-align: center;
+            animation: fadeIn 2s ease-in-out;
         }
         .subheader {
             font-size: 25px;
             color: #33FF57;
             text-align: center;
+            animation: slideIn 2s ease-in-out;
         }
-        .stButton > button {
-            background-color: #007BFF;
-            color: white;
-            font-size: 20px;
+        .content {
+            font-size: 18px;
+            color: #FFFFFF;
+            background-color: #1E1E1E;
+            padding: 20px;
             border-radius: 10px;
-            padding: 10px;
-            transition: 0.3s;
-        }
-        .stButton > button:hover {
-            background-color: #0056b3;
+            text-align: justify;
+            animation: fadeIn 3s ease-in-out;
         }
     </style>
 """, unsafe_allow_html=True)
 
-st.markdown("<div class='title'>AI-Powered Financial Wellness Platform</div>", unsafe_allow_html=True)
-st.markdown("<div class='subheader'>Personalized financial insights, budgeting, and investment strategies</div>", unsafe_allow_html=True)
+st.markdown("<div class='title'>Welcome to AI-Powered Fintech</div>", unsafe_allow_html=True)
+st.markdown("<div class='subheader'>Revolutionizing Financial Wellness Through AI</div>", unsafe_allow_html=True)
 
-# User Inputs with Animation
-col1, col2 = st.columns(2)
-with col1:
-    income = st.number_input("💰 Monthly Income ($)", min_value=0, value=5000, step=100)
-    expenses = st.number_input("💸 Monthly Expenses ($)", min_value=0, value=3000, step=100)
-    investment_goal = st.selectbox("🎯 Investment Goal", ["High Growth", "Low Risk", "Balanced"])
-with col2:
-    debt_level = st.number_input("📉 Existing Debt Level ($)", min_value=0, value=0, step=100)
-    age = st.slider("📅 Your Age", 18, 70, 30)
-    risk_tolerance = st.select_slider("⚖ Risk Tolerance", ["Low", "Medium", "High"], value="Medium")
-
-# Animated Button
-if st.button("🚀 Get Financial Advice"):
-    with st.spinner("Analyzing your financial status..."):
-        time.sleep(2)
-    advice = generate_financial_advice(income, expenses, investment_goal, debt_level)
-    st.success(advice)
+st.markdown("""
+    <div class='content'>
+        Our AI-powered financial wellness platform is designed to provide users with personalized financial insights,
+        budgeting recommendations, investment strategies, and debt management solutions. By leveraging advanced 
+        machine learning algorithms, we analyze financial patterns and help users make informed decisions for a 
+        secure and prosperous future.
+        
+        <br><br>
+        <strong>Key Features:</strong>
+        <ul>
+            <li>Smart Budgeting: AI-driven recommendations based on income, expenses, and spending habits.</li>
+            <li>Investment Strategies: Tailored investment suggestions aligned with your financial goals.</li>
+            <li>Debt Management: Optimize repayments and manage financial obligations effectively.</li>
+            <li>Cross-Platform Accessibility: Use our platform on any device, anywhere, anytime.</li>
+            <li>Banking API Integration: Securely connect with financial institutions for seamless transactions.</li>
+        </ul>
+        
+        <br>
+        Join us in transforming financial management with cutting-edge technology and data-driven insights.
+    </div>
+""", unsafe_allow_html=True)
