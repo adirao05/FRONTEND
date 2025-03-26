@@ -10,7 +10,7 @@ password = st.text_input("Password", type="password")
 confirm_password = st.text_input("Confirm Password", type="password")
 
 # Connect to SQLite
-conn = sqlite3.connect('db/users.db')
+conn = sqlite3.connect('users.db')
 cursor = conn.cursor()
 
 if st.button("Signup"):
