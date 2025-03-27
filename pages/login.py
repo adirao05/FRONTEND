@@ -79,7 +79,7 @@ else:
 
     # ✅ Navigation buttons
     if st.button("Go to Chatbot"):
-        st.switch_page("chatbot.py")
+        st.switch_page("gemini.py")
 
     if st.button("Go to Transaction"):
         st.switch_page("transaction.py")
