@@ -27,4 +27,15 @@ if st.button("Submit", key="submit_btn"):
 if st.button("Logout", key="logout_btn"):
     st.session_state["logged_in"] = False
     st.success("✅ Logged out successfully!")
-    st.experimental_rerun()
+    st.rerun()
+
+import streamlit as st
+
+# ✅ Ensure authentication is checked at the beginning
+if "authenticated" not in st.session_state or not st.session_state.authenticated:
+    st.warning("⚠️ Please log in first.")
+    st.switch_page("pages/login.py")  # Redirect back to login page
+
+# ✅ If logged in, display the content
+st.title("📊 Debt Model")
+st.write("You are now viewing the Debt Model page.")
