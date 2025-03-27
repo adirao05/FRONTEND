@@ -149,8 +149,6 @@ import os
 import pandas as pd
 from io import BytesIO
 
-# Set page config
-st.set_page_config(page_title="PDF to DataFrame", page_icon="📄")
 
 # Create upload folder
 upload_folder = "uploads"
