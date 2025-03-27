@@ -71,7 +71,7 @@ if not st.session_state.authenticated:
             st.success("✅ Login successful!")
 
             # ✅ Redirect to chatbot
-            st.switch_page("chatbot.py")
+            st.switch_page("gemini.py")
         else:
             st.error("❌ Invalid username or password")
 else:
