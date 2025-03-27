@@ -94,7 +94,7 @@ else:
 
     with col2:
         if st.button("Go to Financial Info", key="financial_button"):
-            st.switch_page("pages/financial_info.py")
+            st.switch_page("pages/debtmodel.py")
 
     # ✅ Logout button
     if st.button("Logout", key="logout_button"):
