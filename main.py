@@ -150,28 +150,35 @@ import pandas as pd
 from io import BytesIO
 
 
-# Create upload folder
+# Set Streamlit page configuration
+st.set_page_config(page_title="PDF to DataFrame", page_icon="📄", layout="wide")
+
+# Ensure the uploads folder exists
 upload_folder = "uploads"
+if os.path.exists(upload_folder) and not os.path.isdir(upload_folder):
+    os.remove(upload_folder)  # Remove conflicting file
 os.makedirs(upload_folder, exist_ok=True)
 
-# Title
+# Title and file uploader
 st.title("📄 PDF to DataFrame Extractor")
-
-# File uploader
 uploaded_file = st.file_uploader("Upload PDF", type=["pdf"])
 
-# PDF Extraction function
+# PDF Extraction Function with String Conversion
 def extract_tables_from_pdf(pdf_path):
     """Extract tables from PDF and return as DataFrame"""
     all_data = []
     column_names = None
-    
+
     try:
-        with pdfplumber.open(pdf_path,"adit2807") as pdf:
+        with pdfplumber.open(pdf_path) as pdf:
             for page in pdf.pages:
                 tables = page.extract_table()
-                
+
                 if tables:
+                    # Convert all table values to strings before using 'in'
+                    tables = [[str(cell) if cell is not None else '' for cell in row] for row in tables]
+
+                    # Extract headers and rows
                     if column_names is None:
                         column_names = tables[0]  # First row as headers
                         all_data.extend(tables[1:])  # Skip headers
@@ -183,13 +190,14 @@ def extract_tables_from_pdf(pdf_path):
             return df
         else:
             return None
+
     except Exception as e:
         st.error(f"Error extracting PDF: {str(e)}")
         return None
 
-# Handle PDF upload
+# Display PDF data
 if uploaded_file:
-    # Save PDF
+    # Save uploaded PDF
     pdf_path = os.path.join(upload_folder, uploaded_file.name)
     with open(pdf_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
@@ -199,32 +207,35 @@ if uploaded_file:
     # Extract tables
     with st.spinner("Extracting tables..."):
         df = extract_tables_from_pdf(pdf_path)
+
+    if df is not None and not df.empty:
+        st.subheader("📊 Extracted Data")
+        st.dataframe(df)
+
+        # Download buttons
+        col1, col2 = st.columns(2)
+
+        # CSV Download
+        csv = df.to_csv(index=False).encode('utf-8')
+        col1.download_button(
+            label="Download as CSV",
+            data=csv,
+            file_name="extracted_data.csv",
+            mime="text/csv"
+        )
+
+        # Excel Download
+        output = BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False)
+        output.seek(0)
         
-        if df is not None:
-            st.success("Tables extracted successfully!")
+        col2.download_button(
+            label="Download as Excel",
+            data=output,
+            file_name="extracted_data.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
 
-            # Display the DataFrame
-            st.write("### Extracted Data:")
-            st.dataframe(df)
-
-            # Download as CSV
-            csv = df.to_csv(index=False).encode("utf-8")
-            st.download_button("Download CSV", data=csv, file_name="extracted_data.csv", mime="text/csv")
-
-            # Download as Excel
-            output = BytesIO()
-            with pd.ExcelWriter(output, engine='openpyxl') as writer:
-                df.to_excel(writer, index=False)
-            output.seek(0)
-
-            st.download_button(
-                "Download Excel",
-                data=output,
-                file_name="extracted_data.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
-        else:
-            st.warning("No tables found in the PDF.")
-
-
-
+    else:
+        st.warning("No tables found in the PDF or extraction failed.")
