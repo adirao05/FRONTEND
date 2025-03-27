@@ -293,7 +293,7 @@ def save_pdf_to_server(uploaded_file, save_directory):
         
         # Generate the full file path
         file_path = os.path.join(save_directory, uploaded_file.name)
-        
+        "ok"
         # Save the file
         with open(file_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
