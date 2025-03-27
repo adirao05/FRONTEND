@@ -3,6 +3,7 @@ import streamlit as st
 # ✅ Ensure the user is authenticated
 if "authenticated" not in st.session_state or not st.session_state.authenticated:
     st.warning("⚠️ Please log in first.")
+    st.stop()
 
 # ✅ Display the Debt Model content if authenticated
 st.title("📊 Debt Model")
@@ -12,8 +13,8 @@ st.write("You are now viewing the Debt Model page.")
 st.subheader("💰 Financial Information")
 
 # ✅ Collect yearly income, total debt, and credit score
-yearly_income = st.number_input("Yearly Income Rs", min_value=0.0, step=1000.0)
-total_debt = st.number_input("Total Debt Rs", min_value=0.0, step=1000.0)
+yearly_income = st.number_input("Yearly Income ($)", min_value=0.0, step=1000.0)
+total_debt = st.number_input("Total Debt ($)", min_value=0.0, step=1000.0)
 credit_score = st.number_input("Credit Score", min_value=300, max_value=850, step=10)
 
 # ✅ Calculate debt-to-income (DTI) ratio
