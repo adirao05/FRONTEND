@@ -274,110 +274,66 @@ if uploaded_file:
 
 
 import streamlit as st
-import pandas as pd
-import pdfplumber
 import os
 
-# Define folder paths
-upload_folder = "uploads"
-output_folder = "extracted_data"
-
-# Ensure the directories are created safely
-def create_directories():
-    """Create upload and output folders with error handling."""
+def save_pdf_to_server(uploaded_file, save_directory):
+    """
+    Save an uploaded PDF file to a specified directory on the server.
+    
+    Parameters:
+    - uploaded_file: StreamletUploadedFile object
+    - save_directory: str, path where the file should be saved
+    
+    Returns:
+    - tuple: (bool, str) indicating success/failure and the file path or error message
+    """
     try:
-        os.makedirs(upload_folder, exist_ok=True)
-        os.makedirs(output_folder, exist_ok=True)
-        st.success(f"Folders created successfully: {upload_folder} and {output_folder}")
+        # Create directory if it doesn't exist
+        os.makedirs(save_directory, exist_ok=True)
+        
+        # Generate the full file path
+        file_path = os.path.join(save_directory, uploaded_file.name)
+        
+        # Save the file
+        with open(file_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+            
+        return True, file_path
+    
     except Exception as e:
-        st.error(f"Failed to create folders: {e}")
-
-# Call the function to create directories
-create_directories()
-
-# PDF Extraction Function
-def extract_tables_from_pdf(pdf_path):
-    """Extract tables from PDF and return as DataFrame"""
-    all_data = []
-    column_names = None
-
-    try:
-        with pdfplumber.open(pdf_path) as pdf:
-            for page_num, page in enumerate(pdf.pages, start=1):
-                tables = page.extract_table()
-
-                if tables:
-                    tables = [[str(cell) if cell is not None else '' for cell in row] for row in tables]
-
-                    if not column_names:
-                        column_names = tables[0]
-                        column_names = [f"Unnamed_{i}" if col == '' else col for i, col in enumerate(column_names)]
-                        data_rows = tables[1:]
-
-                        # Adjust rows
-                        for row in data_rows:
-                            if len(row) < len(column_names):
-                                row.extend([''] * (len(column_names) - len(row)))
-                            elif len(row) > len(column_names):
-                                row = row[:len(column_names)]
-                            all_data.append(row)
-                    else:
-                        for row in tables:
-                            if len(row) < len(column_names):
-                                row.extend([''] * (len(column_names) - len(row)))
-                            elif len(row) > len(column_names):
-                                row = row[:len(column_names)]
-                            all_data.append(row)
-
-        if all_data and column_names:
-            df = pd.DataFrame(all_data, columns=column_names)
-            
-            # Save the extracted data locally
-            csv_path = os.path.join(output_folder, "extracted_data.csv")
-            excel_path = os.path.join(output_folder, "extracted_data.xlsx")
-            
-            df.to_csv(csv_path, index=False)
-            df.to_excel(excel_path, index=False)
-            
-            st.success(f"Data saved locally as:\n- CSV: {csv_path}\n- Excel: {excel_path}")
-            
-            return df
-        else:
-            return None
-
-    except Exception as e:
-        st.error(f"Error extracting PDF: {str(e)}")
-        return None
+        return False, str(e)
 
 # Streamlit UI
-st.title("📄 PDF Table Extractor")
-st.write("Upload a PDF file with tabular data, and extract it into a DataFrame.")
+st.title("📄 PDF File Uploader")
+st.write("Upload a PDF file to save it to the server.")
 
-# PDF Uploader
+# Define the save directory
+SAVE_DIRECTORY = "server_uploads"  # Change this to your desired path
+
+# File uploader
 uploaded_file = st.file_uploader("Choose a PDF file", type=["pdf"])
 
 if uploaded_file:
-    file_path = os.path.join(upload_folder, uploaded_file.name)
-
-    # Save the uploaded file
-    with open(file_path, "wb") as f:
-        f.write(uploaded_file.getbuffer())
-
-    st.success(f"Uploaded PDF: {uploaded_file.name}")
-
-    # Extract data
-    with st.spinner("Extracting tables from PDF..."):
-        df = extract_tables_from_pdf(file_path)
-
-        if df is not None:
-            st.success("✅ PDF tables extracted successfully!")
-
-            # Display the extracted DataFrame
-            st.dataframe(df)
-
-            # Display file locations
-            st.write(f"Saved CSV: `{output_folder}/extracted_data.csv`")
-            st.write(f"Saved Excel: `{output_folder}/extracted_data.xlsx`")
-
-        else:
-            st.error("⚠️ No tables were found in the PDF.")
+    # Save the file when uploaded
+    success, result = save_pdf_to_server(uploaded_file, SAVE_DIRECTORY)
+    
+    if success:
+        st.success(f"""
+        ✅ File uploaded successfully!
+        - File name: {uploaded_file.name}
+        - Saved to: {result}
+        """)
+        
+        # Display file details
+        file_details = {
+            "File Name": uploaded_file.name,
+            "File Size": f"{uploaded_file.size / 1024:.2f} KB",
+            "Save Location": result
+        }
+        
+        st.write("### File Details:")
+        for key, value in file_details.items():
+            st.write(f"{key}:** {value}")
+            
+    else:
+        st.error(f"❌ Error saving file: {result}")
