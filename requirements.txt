@@ -9,4 +9,3 @@ openpyxl
 google.generativeai
 scikit-learn
 pickle
-sklearn
