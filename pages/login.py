@@ -35,6 +35,6 @@ if st.button("Login"):
 if st.button("Login"):
     if authenticate_user(username, password):
         st.success("Login successful")
-        st.markdown("""<div class='cta-button'><a href='/dashboard' target='_self'>Transaction</a></div> """, unsafe_allow_html=True)
+        st.markdown("""<div class='cta-button'><a href='/dashboard' target='_self'>dashboard</a></div> """, unsafe_allow_html=True)
 
         
