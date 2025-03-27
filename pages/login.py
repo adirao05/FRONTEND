@@ -71,7 +71,7 @@ if not st.session_state.authenticated:
             st.success("✅ Login successful!")
             
             # ✅ Redirect to transaction page
-            st.experimental_rerun()
+            st.experrerunimental_rerun()
         else:
             st.error("❌ Invalid username or password")
 else:
