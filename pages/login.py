@@ -37,6 +37,7 @@ import hashlib
 
 # ✅ Hashing function
 def hash_password(password):
+    """Hash the password using SHA-256."""
     return hashlib.sha256(password.encode()).hexdigest()
 
 # ✅ Function to authenticate user
@@ -50,50 +51,54 @@ def authenticate_user(username, password):
 
     conn.close()
 
-    if result and result[0] == hash_password(password):
-        return True
-    return False
+    # Compare stored hash with entered password hash
+    return result and result[0] == hash_password(password)
 
-# ✅ Initialize session state
+# ✅ Initialize session state variables
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
+if "username" not in st.session_state:
+    st.session_state.username = ""
+
+# ✅ Streamlit UI
 st.title("🔑 Login Page")
 
-# Only show login form if not authenticated
+# ✅ If not authenticated, show the login form
 if not st.session_state.authenticated:
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
+    username = st.text_input("Username", key="username_input")
+    password = st.text_input("Password", type="password", key="password_input")
 
-    if st.button("Login"):
+    # ✅ Login button with unique key
+    if st.button("Login", key="login_button"):
         if authenticate_user(username, password):
             st.session_state.authenticated = True
+            st.session_state.username = username
             st.success("✅ Login successful!")
 
-            # ✅ Redirect to transaction page
-            st.rerun()  # 🔥 Updated rerun function
+            # ✅ Redirect to the transaction page
+            st.rerun()
         else:
             st.error("❌ Invalid username or password")
+
+# ✅ If authenticated, show success message and navigation buttons
 else:
-    st.success("✅ You are already logged in!")
+    st.success(f"✅ Welcome back, {st.session_state.username}!")
 
-    # ✅ Button to navigate to transaction page
-    if st.button("Go to Transaction"):
-        st.switch_page("pages/transaction.py")
+    col1, col2 = st.columns(2)
 
-# ✅ Logout button
-if st.session_state.authenticated:
-    if st.button("Logout"):
+    # ✅ Navigation buttons with unique keys
+    with col1:
+        if st.button("Go to Transaction", key="transaction_button"):
+            st.switch_page("pages/transaction.py")
+
+    with col2:
+        if st.button("Go to Financial Info", key="financial_button"):
+            st.switch_page("pages/financial_info.py")
+
+    # ✅ Logout button
+    if st.button("Logout", key="logout_button"):
         st.session_state.authenticated = False
+        st.session_state.username = ""
         st.warning("⚠️ You have been logged out.")
-        st.rerun()  # 🔥 Updated rerun function
-
-
-if st.button("Login"):
-    if authenticate_user(username, password):
-        st.session_state["logged_in"] = True
-        st.success("✅ Login successful!")
-        st.switch_page("pages/financial_info.py")  # Redirect to the restricted page
-    else:
-        st.error("❌ Invalid username or password")
-
+        st.rerun()
