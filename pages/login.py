@@ -79,7 +79,7 @@ else:
 
     # ✅ Button to navigate to transaction page
     if st.button("Go to Transaction"):
-        st.switch_page("transaction.py")
+        st.switch_page("pages/transaction.py")
 
 # ✅ Logout button
 if st.session_state.authenticated:
