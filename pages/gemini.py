@@ -93,7 +93,7 @@ import time  # For animations
 # ✅ Check if the user is authenticated
 if "authenticated" not in st.session_state or not st.session_state.authenticated:
     st.warning("⚠️ You must be logged in to access the chatbot.")
-    st.stop()  # Prevents the chatbot from loading
+    st.stop()
 
 # ✅ Configure Gemini API
 GENAI_API_KEY = "AIzaSyBmOqZnpAv-X6u33HRUJAPNaFMArT0HmV0"  # Replace with your actual API key
@@ -155,29 +155,30 @@ for msg in st.session_state.messages:
         st.markdown(f'<div class="bot-message">🤖 {text}</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-# ✅ User input
-user_input = st.text_input("Ask something:")
+# ✅ User input with unique key
+user_input = st.text_input("Ask something:", key="chat_input")
 
-if st.button("Send") and user_input:
-    # Add user message to history
-    st.session_state.messages.append(("user", user_input))
+if st.button("Send"):
+    if user_input:
+        # Add user message to history
+        st.session_state.messages.append(("user", user_input))
 
-    try:
-        # Get response from Gemini
-        with st.spinner("Thinking..."):
-            time.sleep(1)  # Fake delay for smooth animation
-            response = model.generate_content(user_input)
-            bot_response = response.text.strip()
+        try:
+            # Get response from Gemini
+            with st.spinner("Thinking..."):
+                time.sleep(1)  # Fake delay for smooth animation
+                response = model.generate_content(user_input)
+                bot_response = response.text.strip()
 
-        # Add bot response to history
-        st.session_state.messages.append(("bot", bot_response))
-        st.rerun()
+            # Add bot response to history
+            st.session_state.messages.append(("bot", bot_response))
+            st.rerun()
 
-    except Exception as e:
-        st.error(f"API Error: {e}")
+        except Exception as e:
+            st.error(f"API Error: {e}")
 
 # ✅ Logout button
-if st.button("Logout"):
+if st.button("Logout", key="logout_btn"):
     st.session_state.authenticated = False
     st.success("✅ You have been logged out.")
     st.rerun()
