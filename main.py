@@ -2,7 +2,7 @@ import streamlit as st
 import sqlite3
 
 #BACKGROUND COLOUR
-st.set_page_config(page_title="AI-Powered Fintech",layout="wide")
+st.set_page_config(page_title="SALZZ FINANCE",layout="wide")
 
 st.markdown(
     """
@@ -117,7 +117,7 @@ st.markdown("""
         <div class='title'>Welcome to AI-Powered Fintech</div>
         <div class='subheader'>Revolutionizing Financial Wellness Through AI</div>
         <div class='content'>
-            <p>Our AI-powered financial wellness platform is designed to provide users with personalized financial insights,
+            <p>SALZZ FINANCE is a wellness platform designed to provide users with personalized financial insights,
             budgeting recommendations, investment strategies, and debt management solutions. By leveraging advanced 
             machine learning algorithms, we analyze financial patterns and help users make informed decisions for a 
             secure and prosperous future.</p>
