@@ -1,28 +1,5 @@
 import streamlit as st
 import google.generativeai as genai
-
-# Configure Gemini API
-GENAI_API_KEY = "AIzaSyBmOqZnpAv-X6u33HRUJAPNaFMArT0HmV0"
-genai.configure(api_key=GENAI_API_KEY)
-
-# Use the correct model
-try:
-    model = genai.GenerativeModel("gemini-2.0-flash")
-except Exception as e:
-    st.error(f"Error initializing model: {e}")
-
-st.title("Gemini Chatbot")
-
-user_input = st.text_input("Ask me anything:")
-if st.button("Send") and user_input:
-    try:
-        response = model.generate_content(user_input)
-        st.write("🤖:", response.text)
-    except Exception as e:
-        st.error(f"API Error: {e}")
-
-import streamlit as st
-import google.generativeai as genai
 import time  # For animations
 
 # Configure Gemini API
