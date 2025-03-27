@@ -223,7 +223,7 @@ def extract_tables_from_pdf(pdf_path):
 st.title("📄 PDF Table Extractor")
 st.write("Upload a PDF file with tabular data, and extract it into a DataFrame.")
 
-"""# PDF Uploader
+# PDF Uploader
 uploaded_file = st.file_uploader("Choose a PDF file", type=["pdf"])
 
 if uploaded_file:
@@ -232,46 +232,9 @@ if uploaded_file:
     with open(file_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
     
-    st.success(f"Uploaded PDF: {uploaded_file.name}")"""
+    st.success(f"Uploaded PDF: {uploaded_file.name}")
 
     # Extract data
-upload_folder = "uploads"
-
-# Ensure the upload folder exists
-if not os.path.exists(upload_folder):
-    try:
-        os.makedirs(upload_folder)
-        st.success("✅ Folders created successfully: uploads")
-    except Exception as e:
-        st.error(f"❌ Error creating folder: {e}")
-
-# File Uploader
-uploaded_file = st.file_uploader("Choose a PDF file", type=["pdf"])
-
-# Ensure the file is saved properly
-if uploaded_file:
-    # Generate file path
-    file_path = os.path.join(upload_folder, uploaded_file.name)
-
-    try:
-        # Save the uploaded file locally
-        with open(file_path, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-        
-        # Verify if the file exists
-        if os.path.exists(file_path):
-            st.success(f"✅ File saved successfully: {file_path}")
-            
-            # Show confirmation of saved file
-            st.write(f"Saved file location: `{file_path}`")
-            
-        else:
-            st.error("❌ File was not saved successfully.")
-    
-    except Exception as e:
-        st.error(f"❌ Error saving file: {e}")
-
-        
     with st.spinner("Extracting tables from PDF..."):
         df = extract_tables_from_pdf(file_path)
         
