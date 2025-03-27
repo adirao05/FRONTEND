@@ -147,6 +147,7 @@ import pandas as pd
 import pdfplumber
 import os
 
+
 # Create upload directory
 upload_folder = "uploads"
 os.makedirs(upload_folder, exist_ok=True)
@@ -169,16 +170,18 @@ def extract_tables_from_pdf(pdf_path):
                     if not column_names:
                         # Use the first table's header as column names
                         column_names = tables[0]
-                        
+
                         # Handle empty column names
                         column_names = [
                             f"Unnamed_{i}" if col == '' else col
                             for i, col in enumerate(column_names)
                         ]
 
-                        # Fix duplicate column names
-                        column_names = pd.io.parsers.ParserBase({'names': column_names})._maybe_dedup_names(column_names)
-                        
+                        # Fix duplicate column names using pd.Series
+                        column_names = pd.Series(column_names).apply(
+                            lambda x: x if column_names.count(x) == 1 else f"{x}_{column_names.count(x)}"
+                        ).tolist()
+
                         data_rows = tables[1:]
 
                         # Adjust rows to match the column count
@@ -203,9 +206,11 @@ def extract_tables_from_pdf(pdf_path):
         if all_data and column_names:
             df = pd.DataFrame(all_data, columns=column_names)
             
-            # Ensure no duplicate columns after DataFrame creation
-            df.columns = pd.io.parsers.ParserBase({'names': df.columns})._maybe_dedup_names(df.columns)
-            
+            # Ensure no duplicate columns after DataFrame creation using pd.Series
+            df.columns = pd.Series(df.columns).apply(
+                lambda x: x if list(df.columns).count(x) == 1 else f"{x}_{list(df.columns).count(x)}"
+            ).tolist()
+
             return df
         else:
             return None
