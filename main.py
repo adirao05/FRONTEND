@@ -128,7 +128,7 @@ st.markdown("""
 st.markdown("""
 *Key Features:*
 
-                    /t- 📊 *Smart Budgeting*: AI-driven recommendations based on income, expenses, and spending habits.
+                    \t- 📊 *Smart Budgeting*: AI-driven recommendations based on income, expenses, and spending habits.
                     - 💹 *Investment Strategies*: Tailored investment suggestions aligned with your financial goals.
                     - 📉 *Debt Management*: Optimize repayments and manage financial obligations effectively.
                     - 🌍 *Cross-Platform Accessibility*: Use our platform on any device, anywhere, anytime.
