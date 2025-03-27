@@ -18,6 +18,6 @@ st.write("Here you can access financial data...")
 if st.button("Logout"):
     st.session_state.authenticated = False
     st.warning("⚠️ You have been logged out.")
-    st.experimental_rerun()
+    st.rerun()
 
 
