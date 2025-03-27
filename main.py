@@ -135,7 +135,7 @@ st.markdown("""
                     - 🔒 *Banking API Integration*: Securely connect with financial institutions for seamless transactions.
 """)
 
-st.markdown("""
+'''st.markdown("""
     <div class='cta-button'>
         <a href='/signup' target='_self'>Get Started</a>
     </div>
@@ -270,5 +270,114 @@ if uploaded_file:
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
         else:
-            st.error("⚠️ No tables were found in the PDF.")
+            st.error("⚠️ No tables were found in the PDF.")'''
 
+
+import streamlit as st
+import pandas as pd
+import pdfplumber
+import os
+
+# Define folder paths
+upload_folder = "uploads"
+output_folder = "extracted_data"
+
+# Ensure the directories are created safely
+def create_directories():
+    """Create upload and output folders with error handling."""
+    try:
+        os.makedirs(upload_folder, exist_ok=True)
+        os.makedirs(output_folder, exist_ok=True)
+        st.success(f"Folders created successfully: {upload_folder} and {output_folder}")
+    except Exception as e:
+        st.error(f"Failed to create folders: {e}")
+
+# Call the function to create directories
+create_directories()
+
+# PDF Extraction Function
+def extract_tables_from_pdf(pdf_path):
+    """Extract tables from PDF and return as DataFrame"""
+    all_data = []
+    column_names = None
+
+    try:
+        with pdfplumber.open(pdf_path) as pdf:
+            for page_num, page in enumerate(pdf.pages, start=1):
+                tables = page.extract_table()
+
+                if tables:
+                    tables = [[str(cell) if cell is not None else '' for cell in row] for row in tables]
+
+                    if not column_names:
+                        column_names = tables[0]
+                        column_names = [f"Unnamed_{i}" if col == '' else col for i, col in enumerate(column_names)]
+                        data_rows = tables[1:]
+
+                        # Adjust rows
+                        for row in data_rows:
+                            if len(row) < len(column_names):
+                                row.extend([''] * (len(column_names) - len(row)))
+                            elif len(row) > len(column_names):
+                                row = row[:len(column_names)]
+                            all_data.append(row)
+                    else:
+                        for row in tables:
+                            if len(row) < len(column_names):
+                                row.extend([''] * (len(column_names) - len(row)))
+                            elif len(row) > len(column_names):
+                                row = row[:len(column_names)]
+                            all_data.append(row)
+
+        if all_data and column_names:
+            df = pd.DataFrame(all_data, columns=column_names)
+            
+            # Save the extracted data locally
+            csv_path = os.path.join(output_folder, "extracted_data.csv")
+            excel_path = os.path.join(output_folder, "extracted_data.xlsx")
+            
+            df.to_csv(csv_path, index=False)
+            df.to_excel(excel_path, index=False)
+            
+            st.success(f"Data saved locally as:\n- CSV: {csv_path}\n- Excel: {excel_path}")
+            
+            return df
+        else:
+            return None
+
+    except Exception as e:
+        st.error(f"Error extracting PDF: {str(e)}")
+        return None
+
+# Streamlit UI
+st.title("📄 PDF Table Extractor")
+st.write("Upload a PDF file with tabular data, and extract it into a DataFrame.")
+
+# PDF Uploader
+uploaded_file = st.file_uploader("Choose a PDF file", type=["pdf"])
+
+if uploaded_file:
+    file_path = os.path.join(upload_folder, uploaded_file.name)
+
+    # Save the uploaded file
+    with open(file_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+
+    st.success(f"Uploaded PDF: {uploaded_file.name}")
+
+    # Extract data
+    with st.spinner("Extracting tables from PDF..."):
+        df = extract_tables_from_pdf(file_path)
+
+        if df is not None:
+            st.success("✅ PDF tables extracted successfully!")
+
+            # Display the extracted DataFrame
+            st.dataframe(df)
+
+            # Display file locations
+            st.write(f"Saved CSV: `{output_folder}/extracted_data.csv`")
+            st.write(f"Saved Excel: `{output_folder}/extracted_data.xlsx`")
+
+        else:
+            st.error("⚠️ No tables were found in the PDF.")
