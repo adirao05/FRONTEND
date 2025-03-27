@@ -1,20 +1,23 @@
 import streamlit as st
-import pandas as pd
 
-st.set_page_config(page_title="Transaction History", page_icon="📜", layout="wide")
+# ✅ Check authentication status
+if "authenticated" not in st.session_state or not st.session_state.authenticated:
+    st.warning("⚠️ You must be logged in to access this page.")
+    
+    # ✅ Redirect back to login page
+    st.stop()  # Prevent rendering the rest of the page
 
-# Sample transaction data
-transactions = pd.DataFrame({"Date": ["2025-03-01", "2025-03-10", "2025-03-15", "2025-03-20"],
-    "Description": ["Rent", "Groceries", "Gas", "Subscription"],
-    "Category": ["Housing", "Food", "Transport", "Entertainment"],
-    "Amount": [-1200, -350, -50, -20]
-})
+# ✅ Only accessible if authenticated
+st.title("📊 Transaction Page")
+st.write("Welcome to the secured Transaction page!")
 
-st.title("📜 Transaction History")
+# ✅ Example Transaction Data
+st.write("Here you can access financial data...")
 
-st.table(transactions)
+# Logout button
+if st.button("Logout"):
+    st.session_state.authenticated = False
+    st.warning("⚠️ You have been logged out.")
+    st.experimental_rerun()
 
-# Add a button to return to the main page
-if st.button("Back to Dashboard"):
-    st.switch_page("main.py")
 

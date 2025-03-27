@@ -67,17 +67,22 @@ if not st.session_state.authenticated:
 
     if st.button("Login"):
         if authenticate_user(username, password):
-            st.session_state.authenticated = True  # ✅ Persist login in session
+            st.session_state.authenticated = True
             st.success("✅ Login successful!")
+            
+            # ✅ Redirect to transaction page
+            st.experimental_rerun()
         else:
             st.error("❌ Invalid username or password")
 else:
     st.success("✅ You are already logged in!")
-    st.markdown("""<div class='cta-button'><a href='/transaction' target='_self'>Transaction</a></div> """, unsafe_allow_html=True)
+    
+    # ✅ Button to navigate to transaction page
+    if st.button("Go to Transaction"):
+        st.switch_page("transaction.py")
 
 # ✅ Logout button
 if st.session_state.authenticated:
     if st.button("Logout"):
         st.session_state.authenticated = False
         st.warning("⚠️ You have been logged out.")
-
