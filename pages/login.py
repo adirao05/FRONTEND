@@ -39,8 +39,9 @@ import hashlib
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
-# ✅ Authenticate user
+# ✅ Function to authenticate user
 def authenticate_user(username, password):
+    """Check user credentials from SQLite database"""
     conn = sqlite3.connect("users.db")
     cursor = conn.cursor()
 
@@ -59,17 +60,24 @@ if "authenticated" not in st.session_state:
 
 st.title("🔑 Login Page")
 
-# ✅ Show login form if not authenticated
+# Only show login form if not authenticated
 if not st.session_state.authenticated:
-    # ✅ Add unique keys for text_input fields
-    username = st.text_input("Username", key="username_input")
-    password = st.text_input("Password", type="password", key="password_input")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
 
     if st.button("Login"):
         if authenticate_user(username, password):
             st.session_state.authenticated = True
             st.success("✅ Login successful!")
 
+            # ✅ Redirect to transaction page
+            st.rerun()  # 🔥 Updated rerun function
+        else:
+            st.error("❌ Invalid username or password")
+else:
+    st.success("✅ You are already logged in!")
+
+    # ✅ Button to navigate to transaction page
     if st.button("Go to Transaction"):
         st.switch_page("transaction.py")
 
@@ -78,4 +86,4 @@ if st.session_state.authenticated:
     if st.button("Logout"):
         st.session_state.authenticated = False
         st.warning("⚠️ You have been logged out.")
-        st.rerun()
+        st.rerun()  # 🔥 Updated rerun function
