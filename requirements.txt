@@ -9,3 +9,5 @@ openpyxl
 google.generativeai
 scikit-learn
 pickle
+joblib
+matplotlib
