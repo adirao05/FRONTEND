@@ -135,7 +135,7 @@ st.markdown("""
                     - 🔒 *Banking API Integration*: Securely connect with financial institutions for seamless transactions.
 """)
 
-'''st.markdown("""
+st.markdown("""
     <div class='cta-button'>
         <a href='/signup' target='_self'>Get Started</a>
     </div>
@@ -223,7 +223,7 @@ def extract_tables_from_pdf(pdf_path):
 st.title("📄 PDF Table Extractor")
 st.write("Upload a PDF file with tabular data, and extract it into a DataFrame.")
 
-# PDF Uploader
+"""# PDF Uploader
 uploaded_file = st.file_uploader("Choose a PDF file", type=["pdf"])
 
 if uploaded_file:
@@ -232,9 +232,46 @@ if uploaded_file:
     with open(file_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
     
-    st.success(f"Uploaded PDF: {uploaded_file.name}")
+    st.success(f"Uploaded PDF: {uploaded_file.name}")"""
 
     # Extract data
+upload_folder = "uploads"
+
+# Ensure the upload folder exists
+if not os.path.exists(upload_folder):
+    try:
+        os.makedirs(upload_folder)
+        st.success("✅ Folders created successfully: uploads")
+    except Exception as e:
+        st.error(f"❌ Error creating folder: {e}")
+
+# File Uploader
+uploaded_file = st.file_uploader("Choose a PDF file", type=["pdf"])
+
+# Ensure the file is saved properly
+if uploaded_file:
+    # Generate file path
+    file_path = os.path.join(upload_folder, uploaded_file.name)
+
+    try:
+        # Save the uploaded file locally
+        with open(file_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        
+        # Verify if the file exists
+        if os.path.exists(file_path):
+            st.success(f"✅ File saved successfully: {file_path}")
+            
+            # Show confirmation of saved file
+            st.write(f"Saved file location: `{file_path}`")
+            
+        else:
+            st.error("❌ File was not saved successfully.")
+    
+    except Exception as e:
+        st.error(f"❌ Error saving file: {e}")
+
+        
     with st.spinner("Extracting tables from PDF..."):
         df = extract_tables_from_pdf(file_path)
         
@@ -270,70 +307,6 @@ if uploaded_file:
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
         else:
-            st.error("⚠️ No tables were found in the PDF.")'''
+            st.error("⚠️ No tables were found in the PDF.")
 
 
-import streamlit as st
-import os
-
-def save_pdf_to_server(uploaded_file, save_directory):
-    """
-    Save an uploaded PDF file to a specified directory on the server.
-    
-    Parameters:
-    - uploaded_file: StreamletUploadedFile object
-    - save_directory: str, path where the file should be saved
-    
-    Returns:
-    - tuple: (bool, str) indicating success/failure and the file path or error message
-    """
-    try:
-        # Create directory if it doesn't exist
-        os.makedirs(save_directory, exist_ok=True)
-        
-        # Generate the full file path
-        file_path = os.path.join(save_directory, uploaded_file.name)
-        "ok"
-        # Save the file
-        with open(file_path, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-            
-        return True, file_path
-    
-    except Exception as e:
-        return False, str(e)
-
-# Streamlit UI
-st.title("📄 PDF File Uploader")
-st.write("Upload a PDF file to save it to the server.")
-
-# Define the save directory
-SAVE_DIRECTORY = "server_uploads"  # Change this to your desired path
-
-# File uploader
-uploaded_file = st.file_uploader("Choose a PDF file", type=["pdf"])
-
-if uploaded_file:
-    # Save the file when uploaded
-    success, result = save_pdf_to_server(uploaded_file, SAVE_DIRECTORY)
-    
-    if success:
-        st.success(f"""
-        ✅ File uploaded successfully!
-        - File name: {uploaded_file.name}
-        - Saved to: {result}
-        """)
-        
-        # Display file details
-        file_details = {
-            "File Name": uploaded_file.name,
-            "File Size": f"{uploaded_file.size / 1024:.2f} KB",
-            "Save Location": result
-        }
-        
-        st.write("### File Details:")
-        for key, value in file_details.items():
-            st.write(f"{key}:** {value}")
-            
-    else:
-        st.error(f"❌ Error saving file: {result}")
