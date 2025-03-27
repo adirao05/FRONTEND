@@ -1,6 +1,11 @@
 import streamlit as st
 
-# Streamlit App Layout
+# ✅ Check if user is logged in
+if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
+    st.warning("⚠️ You must log in to access this page.")
+    st.stop()  # Stop further execution if not logged in
+
+# 🎯 Display the page content only for logged-in users
 st.title("💰 Financial Information Form")
 
 # Input fields
@@ -19,3 +24,9 @@ if st.button("Submit"):
     st.write(f"**Credit Score:** {credit_score}")
 
     # You can further process this data as needed (e.g., save to a database or use it in calculations)
+
+# 🔓 Logout button
+if st.button("Logout"):
+    st.session_state["logged_in"] = False
+    st.success("✅ Logged out successfully!")
+    st.experimental_rerun()

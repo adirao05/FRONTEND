@@ -87,3 +87,13 @@ if st.session_state.authenticated:
         st.session_state.authenticated = False
         st.warning("⚠️ You have been logged out.")
         st.rerun()  # 🔥 Updated rerun function
+
+
+if st.button("Login"):
+    if authenticate_user(username, password):
+        st.session_state["logged_in"] = True
+        st.success("✅ Login successful!")
+        st.switch_page("pages/financial_info.py")  # Redirect to the restricted page
+    else:
+        st.error("❌ Invalid username or password")
+
