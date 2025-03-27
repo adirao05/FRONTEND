@@ -13,8 +13,8 @@ yearly_income = st.number_input("🏦 Yearly Income ($)", min_value=0.0, max_val
 total_debt = st.number_input("💳 Total Debt ($)", min_value=0.0, max_value=1_000_000.0, step=500.0, format="%.2f")
 credit_score = st.number_input("📊 Credit Score", min_value=300, max_value=850, step=1)
 
-# Button to submit
-if st.button("Submit"):
+# ✅ Add unique keys to the buttons
+if st.button("Submit", key="submit_btn"):
     st.success("✅ Information Submitted Successfully!")
     
     # Display the entered information
@@ -23,10 +23,8 @@ if st.button("Submit"):
     st.write(f"**Total Debt:** ${total_debt:,.2f}")
     st.write(f"**Credit Score:** {credit_score}")
 
-    # You can further process this data as needed (e.g., save to a database or use it in calculations)
-
-# 🔓 Logout button
-if st.button("Logout"):
+# 🔓 Logout button with unique key
+if st.button("Logout", key="logout_btn"):
     st.session_state["logged_in"] = False
     st.success("✅ Logged out successfully!")
     st.experimental_rerun()
