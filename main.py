@@ -142,14 +142,11 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-
 import streamlit as st
 import pdfplumber
-import os
 import pandas as pd
+import os
 from io import BytesIO
-
-
 
 # Ensure the uploads folder exists
 upload_folder = "uploads"
@@ -161,7 +158,7 @@ os.makedirs(upload_folder, exist_ok=True)
 st.title("📄 PDF to DataFrame Extractor")
 uploaded_file = st.file_uploader("Upload PDF", type=["pdf"])
 
-# PDF Extraction Function with String Conversion
+# PDF Extraction Function with Dynamic Column Handling
 def extract_tables_from_pdf(pdf_path):
     """Extract tables from PDF and return as DataFrame"""
     all_data = []
@@ -169,20 +166,37 @@ def extract_tables_from_pdf(pdf_path):
 
     try:
         with pdfplumber.open(pdf_path) as pdf:
-            for page in pdf.pages:
+            for page_num, page in enumerate(pdf.pages, start=1):
                 tables = page.extract_table()
 
                 if tables:
-                    # Convert all table values to strings before using 'in'
+                    # Convert all table cells to strings
                     tables = [[str(cell) if cell is not None else '' for cell in row] for row in tables]
 
-                    # Extract headers and rows
-                    if column_names is None:
-                        column_names = tables[0]  # First row as headers
-                        all_data.extend(tables[1:])  # Skip headers
+                    if not column_names:
+                        # Use the first table's header as column names
+                        column_names = tables[0]
+                        data_rows = tables[1:]
+
+                        # Adjust rows to match the column count
+                        for row in data_rows:
+                            if len(row) < len(column_names):
+                                row.extend([''] * (len(column_names) - len(row)))  # Pad with empty cells
+                            elif len(row) > len(column_names):
+                                row = row[:len(column_names)]  # Trim excess columns
+                            
+                            all_data.append(row)
                     else:
-                        all_data.extend(tables[1:])
-        
+                        # Adjust subsequent tables to match existing headers
+                        for row in tables:
+                            if len(row) < len(column_names):
+                                row.extend([''] * (len(column_names) - len(row)))  # Pad
+                            elif len(row) > len(column_names):
+                                row = row[:len(column_names)]  # Trim
+                            
+                            all_data.append(row)
+
+        # Create DataFrame dynamically
         if all_data and column_names:
             df = pd.DataFrame(all_data, columns=column_names)
             return df
