@@ -150,8 +150,6 @@ import pandas as pd
 from io import BytesIO
 
 
-# Set Streamlit page configuration
-st.set_page_config(page_title="PDF to DataFrame", page_icon="📄", layout="wide")
 
 # Ensure the uploads folder exists
 upload_folder = "uploads"
