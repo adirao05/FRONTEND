@@ -278,12 +278,13 @@ import streamlit as st
 import pandas as pd
 import pdfplumber
 import os
+import time
 
-# Create upload directory
+# Create necessary directories
 upload_folder = "uploads"
-output_folder = "extracted_data"  # Folder to save the extracted CSV/Excel files
+saved_folder = "saved_files"
 os.makedirs(upload_folder, exist_ok=True)
-os.makedirs(output_folder, exist_ok=True)  # Create the output folder if it doesn't exist
+os.makedirs(saved_folder, exist_ok=True)
 
 # PDF Extraction Function
 def extract_tables_from_pdf(pdf_path):
@@ -293,55 +294,28 @@ def extract_tables_from_pdf(pdf_path):
 
     try:
         with pdfplumber.open(pdf_path) as pdf:
-            for page_num, page in enumerate(pdf.pages, start=1):
+            for page in pdf.pages:
                 tables = page.extract_table()
-
                 if tables:
+                    # Convert all table cells to strings and handle empty cells
                     tables = [[str(cell) if cell is not None else '' for cell in row] for row in tables]
-
+                    
                     if not column_names:
-                        column_names = tables[0]
-
-                        # Handle empty column names
-                        column_names = [
-                            f"Unnamed_{i}" if col == '' else col
-                            for i, col in enumerate(column_names)
-                        ]
-
-                        # Handle duplicate column names
-                        column_names = pd.Series(column_names).apply(
-                            lambda x: x if column_names.count(x) == 1 else f"{x}_{column_names.count(x)}"
-                        ).tolist()
-
+                        column_names = [f"Unnamed_{i}" if col == '' else col for i, col in enumerate(tables[0])]
                         data_rows = tables[1:]
 
-                        # Adjust rows to match the column count
                         for row in data_rows:
-                            if len(row) < len(column_names):
-                                row.extend([''] * (len(column_names) - len(row)))
-                            elif len(row) > len(column_names):
-                                row = row[:len(column_names)]
-                            
+                            row.extend([''] * (len(column_names) - len(row)))  # Pad missing columns
+                            row = row[:len(column_names)]  # Trim extra columns
                             all_data.append(row)
                     else:
-                        # Adjust subsequent tables to match existing headers
                         for row in tables:
-                            if len(row) < len(column_names):
-                                row.extend([''] * (len(column_names) - len(row)))
-                            elif len(row) > len(column_names):
-                                row = row[:len(column_names)]
-                            
+                            row.extend([''] * (len(column_names) - len(row)))
+                            row = row[:len(column_names)]
                             all_data.append(row)
 
-        # Create DataFrame
         if all_data and column_names:
             df = pd.DataFrame(all_data, columns=column_names)
-
-            # Ensure no duplicate columns after DataFrame creation
-            df.columns = pd.Series(df.columns).apply(
-                lambda x: x if list(df.columns).count(x) == 1 else f"{x}_{list(df.columns).count(x)}"
-            ).tolist()
-
             return df
         else:
             return None
@@ -350,21 +324,24 @@ def extract_tables_from_pdf(pdf_path):
         st.error(f"Error extracting PDF: {str(e)}")
         return None
 
+
 # Streamlit UI
-st.title("📄 PDF Table Extractor with Local Storage")
+st.title("📄 PDF Table Extractor")
 st.write("Upload a PDF file with tabular data, and extract it into a DataFrame.")
 
 # PDF Uploader
 uploaded_file = st.file_uploader("Choose a PDF file", type=["pdf"])
 
 if uploaded_file:
-    # Save the uploaded file
-    file_path = os.path.join(upload_folder, uploaded_file.name)
-    
+    # Generate timestamp for unique filenames
+    timestamp = time.strftime("%Y%m%d-%H%M%S")
+
+    # Save the uploaded file in 'uploads' folder
+    file_path = os.path.join(upload_folder, f"{timestamp}_{uploaded_file.name}")
     with open(file_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
     
-    st.success(f"Uploaded PDF: {uploaded_file.name}")
+    st.success(f"✅ Uploaded PDF: {uploaded_file.name}")
 
     # Extract data
     with st.spinner("Extracting tables from PDF..."):
@@ -373,47 +350,42 @@ if uploaded_file:
         if df is not None:
             st.success("✅ PDF tables extracted successfully!")
 
-            # Display the extracted DataFrame
-            st.dataframe(df)
+            # Save extracted data properly
+            csv_path = os.path.join(saved_folder, f"extracted_data_{timestamp}.csv")
+            excel_path = os.path.join(saved_folder, f"extracted_data_{timestamp}.xlsx")
 
-            # **Save the DataFrame locally**
-            csv_path = os.path.join(output_folder, f"{uploaded_file.name}_data.csv")
-            excel_path = os.path.join(output_folder, f"{uploaded_file.name}_data.xlsx")
-
-            # Save as CSV and Excel locally
             df.to_csv(csv_path, index=False)
             df.to_excel(excel_path, index=False)
 
-            st.success(f"✅ Data saved locally in `{output_folder}` folder!")
+            st.dataframe(df)
 
-            # Download buttons for user
+            # Download buttons
             st.markdown("### 📥 Download Extracted Data")
 
             col1, col2 = st.columns(2)
 
-            # CSV Download
+            # Download CSV
             with col1:
                 with open(csv_path, "rb") as f:
                     st.download_button(
                         label="Download as CSV",
                         data=f,
-                        file_name=f"{uploaded_file.name}_data.csv",
+                        file_name=f"extracted_data_{timestamp}.csv",
                         mime="text/csv"
                     )
 
-            # Excel Download
+            # Download Excel
             with col2:
                 with open(excel_path, "rb") as f:
                     st.download_button(
                         label="Download as Excel",
                         data=f,
-                        file_name=f"{uploaded_file.name}_data.xlsx",
+                        file_name=f"extracted_data_{timestamp}.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
 
-            st.info(f"💾 CSV saved at: `{csv_path}`")
-            st.info(f"💾 Excel saved at: `{excel_path}`")
+            st.info(f"📂 Extracted files are saved in: {saved_folder}/")
 
         else:
-            st.error("⚠️ No tables were found in the PDF.")
+            st.error("⚠ No tables were found in the PDF.")
 
