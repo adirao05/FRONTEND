@@ -6,4 +6,4 @@ streamlit-authenticator
 bcrypt
 pdfplumber
 openpyxl
-
+google.generativeai
